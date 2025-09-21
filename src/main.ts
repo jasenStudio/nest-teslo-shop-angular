@@ -10,13 +10,18 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  app.enableCors();
+  app.enableCors({
+    origin: '*', // Permite solicitudes de cualquier origen
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Define los métodos HTTP permitidos
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
 
   const config = new DocumentBuilder()
@@ -27,8 +32,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-
   await app.listen(process.env.PORT);
-  logger.log(`App running on port ${ process.env.PORT }`);
+  logger.log(`App running on port ${process.env.PORT}`);
 }
 bootstrap();
